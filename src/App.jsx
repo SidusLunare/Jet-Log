@@ -1,11 +1,12 @@
+import { useEffect } from "react";
+import { useNavigate } from "react-router";
 
 function App() {
-
-
-  return (
-    <>
-    </>
-  )
+  let navigate = useNavigate();
+  useEffect(() => {
+      navigate("/auth/login");
+  }, []);
+  return <></>;
 }
 
-export default App
+export default App;

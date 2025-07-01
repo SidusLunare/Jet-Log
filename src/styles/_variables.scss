@@ -1,0 +1,25 @@
+// color variables
+$main-color: #4d6870;
+$accent-color-one: #f06e2e;
+$accent-color-two: #f0ac2e;
+$accent-color-three: #159ac4;
+$outline-color: #e2e2e2;
+
+// font-size variables
+$font-size-XL: 64px;
+$font-size-L: 48px;
+$font-size-M: 28px;
+$font-size-S: 24px;
+$font-size-XS: 16px;
+
+@import url("https://fonts.googleapis.com/css2?family=Anonymous+Pro:ital,wght@0,400;0,700;1,400;1,700&family=Antonio:wght@100..700&display=swap");
+
+* {
+  color: #fff;
+  font-family: "Anonymous Pro";
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin: 0;
+  padding: 0;
+}
