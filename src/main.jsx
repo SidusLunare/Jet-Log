@@ -1,11 +1,11 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router";
-import Dashboard from "./components/dashboard/dashboard";
-import Login from "./components/auth/login";
-import Register from "./components/auth/register.jsx";
-import Add_spot from "./components/dashboard/add_spot";
-import Edit_spot from "./components/dashboard/edit_spot";
+import Dashboard from "./components/dashboard/Dashboard";
+import Login from "./components/auth/Login";
+import Register from "./components/auth/Register";
+import Add_spot from "./components/dashboard/Add_spot";
+import Edit_spot from "./components/dashboard/Edit_spot";
 import App from "./App.jsx";
 
 createRoot(document.getElementById("root")).render(
