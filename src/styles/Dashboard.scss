@@ -9,6 +9,9 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 5;
     &__logo {
       display: flex;
       flex-direction: row;
@@ -48,7 +51,7 @@
 
   &__main {
     width: 100%;
-    height: 87vh;
+    height: auto;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -146,7 +149,6 @@
       }
       &__button {
         width: 14.5%;
-        height: 100%;
         border-radius: 16px;
         background-color: #159ac4;
         box-shadow: 4px 4px 8px 0px rgba(0, 0, 0, 0.33);
@@ -176,19 +178,101 @@
         font-size: variables.$font-size-S;
 
         p {
-          padding: 32px;
+          padding: 36px 0px;
         }
 
-        p:nth-child(4) {
-          margin: 0px -4.5rem 0px 4.5rem;
+        p:nth-child(1) {
+          padding-left: 32px;
         }
 
-        p:nth-child(2) {
-          margin: 0px -3rem 0px 3rem;
+        p:nth-child(5) {
+          padding-right: 16px;
         }
       }
 
-      //spot card style goes here
+      &__card {
+        width: 100%;
+        height: 100%;
+        border-radius: 16px;
+        background: #4d6870;
+        box-shadow: 4px 4px 8px 0px rgba(0, 0, 0, 0.33);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: variables.$font-size-S;
+        &__title {
+          display: flex;
+          position: relative;
+          align-items: flex-start;
+          flex-direction: column;
+          left: 0;
+          padding-left: 32px;
+          h1 {
+            font-size: variables.$font-size-S;
+          }
+
+          h3 {
+            font-size: variables.$font-size-XXS;
+          }
+        }
+
+        &__buttons {
+          display: flex;
+          position: relative;
+          flex-direction: column;
+          align-items: stretch;
+          justify-content: center;
+          right: 0;
+          margin-right: 8px;
+
+          :first-child {
+            width: 115px;
+            height: 40px;
+            border-radius: 8px 8px 0px 0px;
+            background: #159ac4;
+            box-shadow: 4px 4px 8px 0px rgba(0, 0, 0, 0.33);
+            border-width: 0px;
+            &:hover {
+              cursor: pointer;
+              box-shadow: 4px 4px 8px 0px rgba(0, 0, 0, 0.33) inset;
+            }
+          }
+          :last-child {
+            width: 115px;
+            height: 40px;
+            border-radius: 0px 0px 8px 8px;
+            background: #f06e2e;
+            box-shadow: 4px 4px 8px 0px rgba(0, 0, 0, 0.33);
+            border-width: 0px;
+            &:hover {
+              cursor: pointer;
+              box-shadow: 4px -4px 8px 0px rgba(0, 0, 0, 0.33) inset;
+            }
+          }
+        }
+        p {
+          padding: 36px 0px;
+        }
+
+        &:first-child {
+          margin-top: 32px;
+        }
+
+        p:nth-child(2) {
+          min-width: 25%;
+          max-width: 25%;
+        }
+
+        p:nth-child(3) {
+          min-width: 10%;
+          max-width: 10%;
+        }
+
+        p:nth-child(4) {
+          min-width: 10%;
+          max-width: 10%;
+        }
+      }
     }
 
     &__statistics {

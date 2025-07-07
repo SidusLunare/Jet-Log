@@ -42,7 +42,7 @@ export function loginUser(username, password) {
     (u) => u.username === username && u.password === password
   );
   if (!user) {
-    alert("Invalid credentials, please try again.")
+    alert("Invalid credentials, please try again.");
     throw new Error("Invalid credentials");
   }
   // store only the ID so we don’t mix passwords in “session”
@@ -63,19 +63,49 @@ export function getCurrentUser() {
 }
 
 /** Add an aircraft to the current user’s spotted list */
-export function addSpottedAircraft(aircraft) {
+export function addSpot(spot) {
   const users = loadUsers();
   const current = getCurrentUser();
   if (!current) throw new Error("No user logged in");
 
-  // find in array and push
-  const idx = users.findIndex((u) => u.id === current.id);
-  users[idx].spotted.push(aircraft);
+  const uidx = users.findIndex((u) => u.id === current.id);
+  if (uidx === -1) throw new Error("Current user not found");
+
+  const existing = users[uidx].spotted || [];
+
+  // Next ID is always length+1 now
+  const newId = existing.length + 1;
+  const newSpot = { ...spot, id: newId };
+
+  users[uidx].spotted = [...existing, newSpot];
   saveUsers(users);
+  return newSpot;
 }
 
-/** Example: get the current user’s spotted list (or empty) */
+/** Get the current user’s spotted list (or empty array) */
 export function getSpottedList() {
-  const curr = getCurrentUser();
-  return curr ? curr.spotted : [];
+  const current = getCurrentUser();
+  return current && Array.isArray(current.spotted) ? current.spotted : [];
+}
+
+export function removeSpot(spotId) {
+  const users = loadUsers();
+  const current = getCurrentUser();
+  if (!current) throw new Error("No user logged in");
+
+  const uidx = users.findIndex((u) => u.id === current.id);
+  if (uidx === -1) throw new Error("Current user not found");
+
+  // 1) Filter out the removed spot
+  let spots = (users[uidx].spotted || []).filter((spot) => spot.id !== spotId);
+
+  // 2) Re-assign IDs sequentially 1, 2, 3, …
+  spots = spots.map((spot, idx) => ({
+    ...spot,
+    id: idx + 1,
+  }));
+
+  // 3) Persist back
+  users[uidx].spotted = spots;
+  saveUsers(users);
 }

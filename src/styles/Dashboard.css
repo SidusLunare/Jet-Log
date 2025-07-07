@@ -19,6 +19,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 5;
 }
 .dashboard__navbar__logo {
   display: flex;
@@ -54,7 +57,7 @@
 }
 .dashboard__main {
   width: 100%;
-  height: 87vh;
+  height: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -149,7 +152,6 @@
 }
 .dashboard__main__filterbar__button {
   width: 14.5%;
-  height: 100%;
   border-radius: 16px;
   background-color: #159ac4;
   box-shadow: 4px 4px 8px 0px rgba(0, 0, 0, 0.33);
@@ -178,13 +180,89 @@
   font-size: 24px;
 }
 .dashboard__main__content__infobar p {
-  padding: 32px;
+  padding: 36px 0px;
 }
-.dashboard__main__content__infobar p:nth-child(4) {
-  margin: 0px -4.5rem 0px 4.5rem;
+.dashboard__main__content__infobar p:nth-child(1) {
+  padding-left: 32px;
 }
-.dashboard__main__content__infobar p:nth-child(2) {
-  margin: 0px -3rem 0px 3rem;
+.dashboard__main__content__infobar p:nth-child(5) {
+  padding-right: 16px;
+}
+.dashboard__main__content__card {
+  width: 100%;
+  height: 100%;
+  border-radius: 16px;
+  background: #4d6870;
+  box-shadow: 4px 4px 8px 0px rgba(0, 0, 0, 0.33);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 24px;
+}
+.dashboard__main__content__card__title {
+  display: flex;
+  position: relative;
+  align-items: flex-start;
+  flex-direction: column;
+  left: 0;
+  padding-left: 32px;
+}
+.dashboard__main__content__card__title h1 {
+  font-size: 24px;
+}
+.dashboard__main__content__card__title h3 {
+  font-size: 12px;
+}
+.dashboard__main__content__card__buttons {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  right: 0;
+  margin-right: 8px;
+}
+.dashboard__main__content__card__buttons :first-child {
+  width: 115px;
+  height: 40px;
+  border-radius: 8px 8px 0px 0px;
+  background: #159ac4;
+  box-shadow: 4px 4px 8px 0px rgba(0, 0, 0, 0.33);
+  border-width: 0px;
+}
+.dashboard__main__content__card__buttons :first-child:hover {
+  cursor: pointer;
+  box-shadow: 4px 4px 8px 0px rgba(0, 0, 0, 0.33) inset;
+}
+.dashboard__main__content__card__buttons :last-child {
+  width: 115px;
+  height: 40px;
+  border-radius: 0px 0px 8px 8px;
+  background: #f06e2e;
+  box-shadow: 4px 4px 8px 0px rgba(0, 0, 0, 0.33);
+  border-width: 0px;
+}
+.dashboard__main__content__card__buttons :last-child:hover {
+  cursor: pointer;
+  box-shadow: 4px -4px 8px 0px rgba(0, 0, 0, 0.33) inset;
+}
+.dashboard__main__content__card p {
+  padding: 36px 0px;
+}
+.dashboard__main__content__card:first-child {
+  margin-top: 32px;
+}
+.dashboard__main__content__card p:nth-child(2) {
+  min-width: 25%;
+  max-width: 25%;
+}
+.dashboard__main__content__card p:nth-child(3) {
+  min-width: 10%;
+  max-width: 10%;
+}
+.dashboard__main__content__card p:nth-child(4) {
+  min-width: 10%;
+  max-width: 10%;
 }
 .dashboard__main__statistics {
   width: 95%;

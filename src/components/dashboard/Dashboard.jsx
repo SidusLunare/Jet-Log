@@ -2,8 +2,10 @@ import { aircraftTypes, airlines } from "../../data/aircraft_data.js";
 import { useNavigate } from "react-router";
 import Select from "react-select";
 import "../../styles/Dashboard.css";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
+
 import { getCurrentUser, logoutUser } from "../../utils/userstorage.js";
+import Spotcards from "../cards/Spotcards.jsx";
 
 const Dashboard = () => {
   const tempText = "835.093";
@@ -58,13 +60,23 @@ const Dashboard = () => {
     label: airline.label,
   }));
 
-  const aircraftTypeHandler = () => {};
+  const aircraftTypeHandler = (option) => {
+    setValueAircraftFilter({
+      value: option.value,
+      label: option.label,
+    });
+  };
 
   const aircraftTypeValue = () => {
     AircraftTypesList.find((type) => type.value === valueAircraftFilter);
   };
 
-  const airlinesHandler = () => {};
+  const airlinesHandler = (option) => {
+    setValueAirlineFilter({
+      value: option.value,
+      label: option.label,
+    });
+  };
 
   const airlinesValue = () => {
     AirlinesList.find((airline) => airline.value === valueAirlineFilter);
@@ -117,9 +129,9 @@ const Dashboard = () => {
               </h1>
               <Select
                 unstyled
-                placeholder="All Airlines"
+                placeholder="All Types"
                 value={aircraftTypeValue()}
-                onChange={aircraftTypeHandler()}
+                onChange={aircraftTypeHandler}
                 options={aircraftTypes}
                 isSearchable={false}
                 className="dashboard__main__filterbar__container__buttons__dropdown"
@@ -132,9 +144,9 @@ const Dashboard = () => {
               </h1>
               <Select
                 unstyled
-                placeholder="All Types"
+                placeholder="All Airlines"
                 value={airlinesValue()}
-                onChange={airlinesHandler()}
+                onChange={airlinesHandler}
                 options={airlines}
                 isSearchable={false}
                 className="dashboard__main__filterbar__container__buttons__dropdown"
@@ -158,6 +170,9 @@ const Dashboard = () => {
             <p>Location</p>
             <p>Date added</p>
             <p>Actions</p>
+          </section>
+          <section>
+            <Spotcards />
           </section>
         </section>
         <section className="dashboard__main__statistics">
