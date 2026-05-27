@@ -1,7 +1,6 @@
 import { aircraftTypes, airlines } from "../../data/aircraft_data.js";
 import { useNavigate } from "react-router";
 import Select from "react-select";
-import "../../styles/Dashboard.css";
 import { useState, useEffect } from "react";
 
 import { getCurrentUser, logoutUser } from "../../utils/userstorage.js";
@@ -165,13 +164,17 @@ const Dashboard = () => {
         </section>
         <section className="dashboard__main__content">
           <section className="dashboard__main__content__infobar">
-            <p>Aircraft information</p>
-            <p>Airline</p>
-            <p>Location</p>
-            <p>Date added</p>
-            <p>Actions</p>
+            <p className="dashboard__main__content__infobar__aircraft-information">
+              Aircraft information
+            </p>
+            <p className="dashboard__main__content__infobar__airline">Airline</p>
+            <p className="dashboard__main__content__infobar__location">Location</p>
+            <p className="dashboard__main__content__infobar__date">
+              Date added
+            </p>
+            <p className="dashboard__main__content__infobar__actions">Actions</p>
           </section>
-          <section>
+          <section className="dashboard__main__content__spotcards">
             <Spotcards />
           </section>
         </section>

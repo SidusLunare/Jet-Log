@@ -4,7 +4,6 @@ import {
   getCurrentUser,
   logoutUser,
 } from "../../utils/userstorage.js";
-import "../../styles/add-spot.css";
 import { useState, useRef } from "react";
 import Select from "react-select";
 import { useNavigate } from "react-router";
@@ -26,6 +25,7 @@ const Add_spot = () => {
     value: "NoFilter",
     label: "All Airlines",
   });
+  const [buttonState, setButtonState] = useState(false);
   const user = getCurrentUser();
 
   //dropdown functions
@@ -39,15 +39,28 @@ const Add_spot = () => {
     label: airline.label,
   }));
 
+  const ButtonStateHandler = () => {
+    const off = false;
+    const on = true;
+    if (
+      registrationData.registration === "" ||
+      locationData.location === "" ||
+      dateData.date === "" ||
+      valueAircraftFilter.value === "NoFilter" ||
+      valueAirlineFilter.value === "NoFilter"
+    ) {
+      setButtonState(off);
+    } else {
+      setButtonState(on);
+    }
+  };
+
   const aircraftTypeHandler = (option) => {
     setValueAircraftFilter({
       value: option.value,
       label: option.label,
     });
-  };
-
-  const aircraftTypeValue = () => {
-    AircraftTypesList.find((type) => type.value === valueAircraftFilter);
+    ButtonStateHandler();
   };
 
   const airlinesHandler = (option) => {
@@ -55,10 +68,7 @@ const Add_spot = () => {
       value: option.value,
       label: option.label,
     });
-  };
-
-  const airlinesValue = () => {
-    AirlinesList.find((airline) => airline.value === valueAirlineFilter);
+    ButtonStateHandler();
   };
 
   //form functions
@@ -66,16 +76,19 @@ const Add_spot = () => {
   const registrationNumHandler = (e) => {
     setRegistrationData(e.target.value);
     console.log(e.target.value);
+    ButtonStateHandler();
   };
 
   const locationHandler = (e) => {
     setLocationData(e.target.value);
     console.log(e.target.value);
+    ButtonStateHandler();
   };
 
   const dateHandler = (e) => {
     setDateData(e.target.value);
     console.log(e.target.value);
+    ButtonStateHandler();
   };
 
   const handleExternalClick = () => {
@@ -95,6 +108,7 @@ const Add_spot = () => {
     addSpot(newSpot);
     navigate("/dashboard");
   };
+
   return (
     <>
       <section className="add-spot">
@@ -129,7 +143,12 @@ const Add_spot = () => {
               <section className="add-spot__main__content__infobar__buttons">
                 <button
                   onClick={handleExternalClick}
-                  className="add-spot__main__content__infobar__buttons__save-button"
+                  className={
+                    buttonState
+                      ? "add-spot__main__content__infobar__buttons__save-button"
+                      : "add-spot__main__content__infobar__buttons__save-button--disabled"
+                  }
+                  disabled={!buttonState}
                 >
                   <p>Save</p>
                 </button>
@@ -137,6 +156,7 @@ const Add_spot = () => {
                   className="add-spot__main__content__infobar__buttons__back-button"
                   src="/arrow_back.svg"
                   alt="back arrow"
+                  onClick={() => navigate(-1)}
                 />
               </section>
             </section>

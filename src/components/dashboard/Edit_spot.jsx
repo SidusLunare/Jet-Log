@@ -1,17 +1,20 @@
 import { aircraftTypes, airlines } from "../../data/aircraft_data.js";
 import {
-  addSpot,
+  editSpot,
   getCurrentUser,
   logoutUser,
+  getSpottedList,
 } from "../../utils/userstorage.js";
-import "../../styles/add-spot.css";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Select from "react-select";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 
-const Add_spot = () => {
+const Edit_spot = () => {
   const formRef = useRef(null);
   let navigate = useNavigate();
+  const { spotId } = useParams();
+  const spots = getSpottedList();
+
   const [registrationData, setRegistrationData] = useState({
     registration: "",
   });
@@ -26,10 +29,71 @@ const Add_spot = () => {
     value: "NoFilter",
     label: "All Airlines",
   });
+  const [buttonState, setButtonState] = useState(true);
   const user = getCurrentUser();
 
-  //dropdown functions
+  // Filter for the specific spot
+  const currentSpot = spots.find((spot) => spot.id === parseInt(spotId));
 
+  const ButtonStateHandler = () => {
+    const off = false;
+    const on = true;
+    if (
+      registrationData.registration === "" ||
+      locationData.location === "" ||
+      dateData.date === "" ||
+      valueAircraftFilter.value === "NoFilter" ||
+      valueAirlineFilter.value === "NoFilter"
+    ) {
+      setButtonState(off);
+      console.log(
+        registrationData.registration,
+        locationData.location,
+        dateData.date,
+        valueAircraftFilter.value,
+        valueAirlineFilter.value,
+      );
+    } else {
+      setButtonState(on);
+    }
+  };
+
+  // Wait for currentSpot to be found before setting initial values
+  useEffect(() => {
+    console.log("Setting initial values for edit form...");
+    if (currentSpot) {
+      console.log("Current spot found, setting form values:", currentSpot);
+      setValueAircraftFilter({
+        value: currentSpot.aircraftType.value,
+        label: currentSpot.aircraftType.label,
+      });
+      setRegistrationData(currentSpot.registration);
+      setValueAirlineFilter({
+        value: currentSpot.airline.value,
+        label: currentSpot.airline.label,
+      });
+      setLocationData(currentSpot.location);
+      setDateData(currentSpot.date);
+    }
+  }, [spotId]);
+
+  // const setInitialValues = () => {
+  //   if (currentSpot) {
+  //     setValueAircraftFilter({
+  //       value: currentSpot.aircraftType.value,
+  //       label: currentSpot.aircraftType.label,
+  //     });
+  //     setRegistrationData(currentSpot.registration);
+  //     setValueAirlineFilter({
+  //       value: currentSpot.airline.value,
+  //       label: currentSpot.airline.label,
+  //     });
+  //     setLocationData(currentSpot.location);
+  //     setDateData(currentSpot.date);
+  //   }
+  // };
+
+  //dropdown functions
   const AircraftTypesList = aircraftTypes.map((aircraftType) => ({
     value: aircraftType.value,
     label: aircraftType.label,
@@ -44,10 +108,7 @@ const Add_spot = () => {
       value: option.value,
       label: option.label,
     });
-  };
-
-  const aircraftTypeValue = () => {
-    AircraftTypesList.find((type) => type.value === valueAircraftFilter);
+    ButtonStateHandler();
   };
 
   const airlinesHandler = (option) => {
@@ -55,10 +116,7 @@ const Add_spot = () => {
       value: option.value,
       label: option.label,
     });
-  };
-
-  const airlinesValue = () => {
-    AirlinesList.find((airline) => airline.value === valueAirlineFilter);
+    ButtonStateHandler();
   };
 
   //form functions
@@ -66,16 +124,19 @@ const Add_spot = () => {
   const registrationNumHandler = (e) => {
     setRegistrationData(e.target.value);
     console.log(e.target.value);
+    ButtonStateHandler();
   };
 
   const locationHandler = (e) => {
     setLocationData(e.target.value);
     console.log(e.target.value);
+    ButtonStateHandler();
   };
 
   const dateHandler = (e) => {
     setDateData(e.target.value);
     console.log(e.target.value);
+    ButtonStateHandler();
   };
 
   const handleExternalClick = () => {
@@ -84,17 +145,18 @@ const Add_spot = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const newSpot = {
+    const changedSpot = {
       aircraftType: valueAircraftFilter,
       registration: registrationData,
       airline: valueAirlineFilter,
       location: locationData,
       date: dateData,
     };
-    console.log("Sending to addSpot:", newSpot);
-    addSpot(newSpot);
-    navigate("/dashboard");
+    console.log("editing spot:", changedSpot);
+    editSpot(changedSpot);
+    // navigate("/dashboard");
   };
+
   return (
     <>
       <section className="add-spot">
@@ -129,7 +191,12 @@ const Add_spot = () => {
               <section className="add-spot__main__content__infobar__buttons">
                 <button
                   onClick={handleExternalClick}
-                  className="add-spot__main__content__infobar__buttons__save-button"
+                  className={
+                    buttonState
+                      ? "add-spot__main__content__infobar__buttons__save-button"
+                      : "add-spot__main__content__infobar__buttons__save-button--disabled"
+                  }
+                  disabled={!buttonState}
                 >
                   <p>Save</p>
                 </button>
@@ -137,6 +204,7 @@ const Add_spot = () => {
                   className="add-spot__main__content__infobar__buttons__back-button"
                   src="/arrow_back.svg"
                   alt="back arrow"
+                  onClick={() => navigate(-1)}
                 />
               </section>
             </section>
@@ -152,7 +220,7 @@ const Add_spot = () => {
               id="aircraftType"
               unstyled
               placeholder="Please select type"
-              value={aircraftTypeValue()}
+              value={valueAircraftFilter}
               onChange={aircraftTypeHandler}
               options={aircraftTypes}
               isSearchable={false}
@@ -166,7 +234,7 @@ const Add_spot = () => {
               name="registration"
               id="registration"
               placeholder="Reg. number..."
-              // value={""}
+              value={registrationData}
               onChange={registrationNumHandler}
               required
             />
@@ -176,7 +244,7 @@ const Add_spot = () => {
               id="airline"
               unstyled
               placeholder="All Airlines"
-              value={airlinesValue()}
+              value={valueAirlineFilter}
               onChange={airlinesHandler}
               options={airlines}
               isSearchable={false}
@@ -189,7 +257,7 @@ const Add_spot = () => {
               type="text"
               name="location"
               id="location"
-              // value={""}
+              value={locationData}
               onChange={locationHandler}
               placeholder="Input location..."
               required
@@ -199,7 +267,7 @@ const Add_spot = () => {
               type="date"
               name="date"
               id="date"
-              // value={""}
+              value={dateData}
               onChange={dateHandler}
               required
             />
@@ -210,4 +278,4 @@ const Add_spot = () => {
   );
 };
 
-export default Add_spot;
+export default Edit_spot;

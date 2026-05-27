@@ -7,6 +7,7 @@ import Register from "./components/auth/Register";
 import Add_spot from "./components/dashboard/Add_spot";
 import Edit_spot from "./components/dashboard/Edit_spot";
 import App from "./App.jsx";
+import "./styles/main.scss";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -19,8 +20,8 @@ createRoot(document.getElementById("root")).render(
         </Route>
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="dashboard/add-spot" element={<Add_spot />} />
-        <Route path="dashboard/edit-spot/:id" element={<Edit_spot />} />
+        <Route path="dashboard/edit-spot/:spotId" element={<Edit_spot />} />
       </Routes>
     </BrowserRouter>
-  </StrictMode>
+  </StrictMode>,
 );

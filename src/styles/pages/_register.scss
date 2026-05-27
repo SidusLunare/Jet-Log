@@ -1,5 +1,3 @@
-@use "variables";
-
 .auth {
   display: flex;
   justify-content: center;
@@ -13,10 +11,10 @@
       align-items: center;
       gap: 38px;
       width: 100%;
-      height: 288px;
+      height: 25%;
       &__image {
-        width: 64px;
-        height: 64px;
+        width: 4rem;
+        height: 4rem;
       }
 
       &__title {
@@ -27,10 +25,10 @@
       }
     }
 
-    &__login {
+    &__register {
       width: 100%;
-      height: 512px;
-      border-radius: 16px;
+      height: 587px;
+      border-radius: 1rem;
       background: variables.$main-color;
       box-shadow: 4px 4px 8px 0px rgba(0, 0, 0, 0.33);
       display: flex;
@@ -45,12 +43,12 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 32px;
+        gap: 2rem;
         width: 100%;
 
         &__input {
           width: 60%;
-          height: 64px;
+          height: 4rem;
           padding: 0px 0px 0px 33px;
           border-radius: 8px;
           border: 3px solid #e2e2e2;
@@ -60,7 +58,7 @@
           font-size: variables.$font-size-M;
         }
 
-        &__register-button {
+        &__login-button {
           font-size: 12px;
           border-width: 0;
           text-decoration-line: underline;
@@ -82,7 +80,7 @@
           box-shadow: 4px 4px 4px 0px rgba(0, 0, 0, 0.25);
           border-width: 0;
           font-size: variables.$font-size-M;
-          margin-top: 16px;
+          margin-top: 1rem;
           &:hover {
             box-shadow: 4px 4px 8px 0px rgba(0, 0, 0, 0.33) inset;
             border-width: 0;

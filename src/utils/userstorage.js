@@ -39,7 +39,7 @@ export function registerUser(username, password) {
 export function loginUser(username, password) {
   const users = loadUsers();
   const user = users.find(
-    (u) => u.username === username && u.password === password
+    (u) => u.username === username && u.password === password,
   );
   if (!user) {
     alert("Invalid credentials, please try again.");
@@ -86,6 +86,28 @@ export function addSpot(spot) {
 export function getSpottedList() {
   const current = getCurrentUser();
   return current && Array.isArray(current.spotted) ? current.spotted : [];
+}
+
+export function editSpot(spotId) {
+  const users = loadUsers();
+  const current = getCurrentUser();
+  if (!current) throw new Error("No user logged in");
+
+  const uidx = users.findIndex((u) => u.id === current.id);
+  if (uidx === -1) throw new Error("Current user not found");
+  // 1) Filter out the spot
+  let spots = (users[uidx].spotted || []).filter((spot) => spot.id !== spotId);
+  // 2) Edit the spot as needed (this is just a placeholder, you would replace this with actual edit logic)
+  spots = spots.map((spot) =>
+    spot.id === spotId
+      ? { ...spot, location: "Edited Location", date: "Edited Date" }
+      : spot,
+  );
+  console.log(spots);
+
+  // 3) Persist back
+  users[uidx].spotted = spots;
+  saveUsers(users);
 }
 
 export function removeSpot(spotId) {

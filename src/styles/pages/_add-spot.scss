@@ -1,5 +1,3 @@
-@use "variables";
-
 .add-spot {
   width: 100vw;
   &__navbar {
@@ -93,12 +91,31 @@
               cursor: pointer;
               box-shadow: 4px 4px 8px 0px rgba(0, 0, 0, 0.33) inset;
             }
+            &--disabled {
+              background-color: variables.$accent-color-one--disabled;
+              width: 50%;
+              height: 48px;
+              border-radius: 8px;
+              display: flex;
+              box-shadow: 4px 4px 8px 0px rgba(0, 0, 0, 0.33) inset;
+              align-items: center;
+              justify-content: center;
+              border: 0;
+              font-size: variables.$font-size-S;
+              &:hover {
+                cursor: not-allowed;
+                box-shadow: 4px 4px 8px 0px rgba(0, 0, 0, 0.33) inset;
+              }
+            }
           }
 
           &__back-button {
             width: 9.375%;
             height: 36px;
             margin-right: 76px;
+            &:hover {
+              cursor: pointer;
+            }
           }
         }
 
