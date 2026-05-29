@@ -27,7 +27,7 @@ const Dashboard = () => {
   // user stuff
 
   const user = getCurrentUser();
-
+  
   // global statistics number generator
   useEffect(() => {
     const id = setInterval(() => {

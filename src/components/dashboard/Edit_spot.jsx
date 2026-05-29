@@ -32,6 +32,7 @@ const Edit_spot = () => {
   const [buttonState, setButtonState] = useState(true);
   const user = getCurrentUser();
 
+
   // Filter for the specific spot
   const currentSpot = spots.find((spot) => spot.id === parseInt(spotId));
 
@@ -152,9 +153,8 @@ const Edit_spot = () => {
       location: locationData,
       date: dateData,
     };
-    console.log("editing spot:", changedSpot);
-    editSpot(changedSpot);
-    // navigate("/dashboard");
+    editSpot(spotId, changedSpot);
+    navigate("/dashboard");
   };
 
   return (

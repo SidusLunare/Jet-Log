@@ -11,11 +11,10 @@ import { useNavigate } from "react-router";
 const Add_spot = () => {
   const formRef = useRef(null);
   let navigate = useNavigate();
-  const [registrationData, setRegistrationData] = useState({
-    registration: "",
-  });
-  const [locationData, setLocationData] = useState({ location: "" });
-  const [dateData, setDateData] = useState({ date: "" });
+  const today = new Date().toISOString().slice(0, 10);
+  const [registrationData, setRegistrationData] = useState("");
+  const [locationData, setLocationData] = useState("");
+  const [dateData, setDateData] = useState(today);
   const [isHovered, setIsHovered] = useState(false);
   const [valueAircraftFilter, setValueAircraftFilter] = useState({
     value: "NoFilter",
@@ -43,9 +42,9 @@ const Add_spot = () => {
     const off = false;
     const on = true;
     if (
-      registrationData.registration === "" ||
-      locationData.location === "" ||
-      dateData.date === "" ||
+      registrationData === "" ||
+      locationData === "" ||
+      dateData === "" ||
       valueAircraftFilter.value === "NoFilter" ||
       valueAirlineFilter.value === "NoFilter"
     ) {
@@ -172,7 +171,7 @@ const Add_spot = () => {
               id="aircraftType"
               unstyled
               placeholder="Please select type"
-              value={aircraftTypeValue()}
+              value={valueAircraftFilter}
               onChange={aircraftTypeHandler}
               options={aircraftTypes}
               isSearchable={false}
@@ -195,7 +194,7 @@ const Add_spot = () => {
               id="airline"
               unstyled
               placeholder="All Airlines"
-              value={airlinesValue()}
+              value={valueAirlineFilter}
               onChange={airlinesHandler}
               options={airlines}
               isSearchable={false}
@@ -217,6 +216,7 @@ const Add_spot = () => {
               type="date"
               name="date"
               id="date"
+              value={dateData}
               onChange={dateHandler}
               required
             />

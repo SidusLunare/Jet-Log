@@ -88,27 +88,39 @@ export function getSpottedList() {
   return current && Array.isArray(current.spotted) ? current.spotted : [];
 }
 
-export function editSpot(spotId) {
+
+export function editSpot(spotId, changedSpot) {
+  // ensure numeric id for comparisons
+  const idNum = parseInt(spotId, 10);
+  // get variables
   const users = loadUsers();
   const current = getCurrentUser();
+  // check if user is actually logged on
   if (!current) throw new Error("No user logged in");
 
+  // find correct user
   const uidx = users.findIndex((u) => u.id === current.id);
   if (uidx === -1) throw new Error("Current user not found");
-  // 1) Filter out the spot
-  let spots = (users[uidx].spotted || []).filter((spot) => spot.id !== spotId);
-  // 2) Edit the spot as needed (this is just a placeholder, you would replace this with actual edit logic)
-  spots = spots.map((spot) =>
-    spot.id === spotId
-      ? { ...spot, location: "Edited Location", date: "Edited Date" }
-      : spot,
-  );
-  console.log(spots);
 
-  // 3) Persist back
-  users[uidx].spotted = spots;
+  const spots = users[uidx].spotted || [];
+
+  // find the index of the spot to edit
+  const idx = spots.findIndex((s) => s.id === idNum);
+  if (idx === -1) throw new Error("Spot not found");
+
+  // create the edited spot with the original id
+  const editedSpot = { ...changedSpot, id: idNum };
+
+  // replace in-place to preserve array position
+  const newSpots = [...spots];
+  newSpots[idx] = editedSpot;
+
+  // persist and return edited spot
+  users[uidx].spotted = newSpots;
   saveUsers(users);
+  return editedSpot;
 }
+
 
 export function removeSpot(spotId) {
   const users = loadUsers();

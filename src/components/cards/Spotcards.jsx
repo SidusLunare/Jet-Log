@@ -17,7 +17,7 @@ const Spotcards = () => {
 
   return (
     <>
-      {spots.length === 0 && <p>No spots yet.</p>}
+      {spots.length === 0 && <p className="dashboard__main__content__spotcards__nospot-card">No spots yet.</p>}
       {spots.map((spot) => (
         <section
           key={spot.id}
