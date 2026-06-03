@@ -192,7 +192,7 @@
           align-items: center;
           justify-content: flex-end;
           width: 20%;
-          padding-right:18px;
+          padding-right: 18px;
         }
         p {
           padding-top: 36px;
@@ -281,6 +281,10 @@
           &:first-child {
             margin-top: 32px;
           }
+          &--removed {
+            text-align: center;
+            width: 100%;
+          }
         }
         &__nospot-card {
           width: 100%;
@@ -306,7 +310,7 @@
       flex-direction: row;
       gap: 32px;
       margin-top: 32px;
-      bottom: 48px;
+      margin-bottom: 48px;
       &__global {
         width: 49%;
         padding: 48px;

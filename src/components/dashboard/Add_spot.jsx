@@ -4,9 +4,20 @@ import {
   getCurrentUser,
   logoutUser,
 } from "../../utils/userstorage.js";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Select from "react-select";
 import { useNavigate } from "react-router";
+
+// Custom dropdown indicator component
+const CustomDropdownIndicator = (props) => (
+  <div {...props.innerProps}>
+    <img
+      src="/dropdown_arrow.svg"
+      alt="dropdown"
+      style={{ width: "48px", height: "48px" }}
+    />
+  </div>
+);
 
 const Add_spot = () => {
   const formRef = useRef(null);
@@ -26,6 +37,27 @@ const Add_spot = () => {
   });
   const [buttonState, setButtonState] = useState(false);
   const user = getCurrentUser();
+
+  // Check button state whenever form fields change
+  useEffect(() => {
+    if (
+      registrationData === "" ||
+      locationData === "" ||
+      dateData === "" ||
+      valueAircraftFilter.value === "NoFilter" ||
+      valueAirlineFilter.value === "NoFilter"
+    ) {
+      setButtonState(false);
+    } else {
+      setButtonState(true);
+    }
+  }, [
+    registrationData,
+    locationData,
+    dateData,
+    valueAircraftFilter,
+    valueAirlineFilter,
+  ]);
 
   //dropdown functions
 
@@ -59,7 +91,6 @@ const Add_spot = () => {
       value: option.value,
       label: option.label,
     });
-    ButtonStateHandler();
   };
 
   const airlinesHandler = (option) => {
@@ -67,27 +98,23 @@ const Add_spot = () => {
       value: option.value,
       label: option.label,
     });
-    ButtonStateHandler();
   };
 
   //form functions
 
   const registrationNumHandler = (e) => {
-    setRegistrationData(e.target.value);
     console.log(e.target.value);
-    ButtonStateHandler();
+    setRegistrationData(e.target.value);
   };
 
   const locationHandler = (e) => {
     setLocationData(e.target.value);
     console.log(e.target.value);
-    ButtonStateHandler();
   };
 
   const dateHandler = (e) => {
     setDateData(e.target.value);
     console.log(e.target.value);
-    ButtonStateHandler();
   };
 
   const handleExternalClick = () => {
@@ -175,6 +202,7 @@ const Add_spot = () => {
               onChange={aircraftTypeHandler}
               options={aircraftTypes}
               isSearchable={false}
+              components={{ DropdownIndicator: CustomDropdownIndicator }}
               className="add-spot__main__form__dropdown"
               classNamePrefix="add-spot__main__form__dropdown"
               required
@@ -198,6 +226,7 @@ const Add_spot = () => {
               onChange={airlinesHandler}
               options={airlines}
               isSearchable={false}
+              components={{ DropdownIndicator: CustomDropdownIndicator }}
               className="add-spot__main__form__dropdown"
               classNamePrefix="add-spot__main__form__dropdown"
               required

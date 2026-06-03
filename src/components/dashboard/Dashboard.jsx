@@ -1,19 +1,37 @@
 import { aircraftTypes, airlines } from "../../data/aircraft_data.js";
-import { useNavigate } from "react-router";
+import { useNavigate, useLocation } from "react-router";
 import Select from "react-select";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
-import { getCurrentUser, logoutUser } from "../../utils/userstorage.js";
+import {
+  getCurrentUser,
+  logoutUser,
+  loadFilters,
+  saveFilters,
+} from "../../utils/userstorage.js";
 import Spotcards from "../cards/Spotcards.jsx";
+
+// Custom dropdown indicator component
+const CustomDropdownIndicator = (props) => (
+  <div {...props.innerProps}>
+    <img
+      src="/dropdown_arrow.svg"
+      alt="dropdown"
+      style={{ width: "48px", height: "48px" }}
+    />
+  </div>
+);
 
 const Dashboard = () => {
   const tempText = "835.093";
   let navigate = useNavigate();
+  const location = useLocation();
   const [totalSpotted, setTotalSpotted] = useState(9463663);
   const [totalUniqueAircraft, setTotalUniqueAircraft] = useState(4574);
   const [totalUniqueAirlines, setTotalUniqueAirlines] = useState(835);
   const [mostSpottedAircraft, setMostSpottedAircraft] = useState(1853672);
   const [mostSpottedAirline, setMostSpottedAirline] = useState(735156);
+  const [searchTerm, setSearchTerm] = useState("");
   const [valueAircraftFilter, setValueAircraftFilter] = useState({
     value: "NoFilter",
     label: "All Types",
@@ -23,11 +41,77 @@ const Dashboard = () => {
     label: "All Airlines",
   });
   const [isHovered, setIsHovered] = useState(false);
+  const [sortField, setSortField] = useState(null);
+  const [sortDirection, setSortDirection] = useState("asc");
+  const isLoadedRef = useRef(false);
 
   // user stuff
 
   const user = getCurrentUser();
-  
+
+  // Load filters from localStorage on mount and when returning to dashboard
+  useEffect(() => {
+    const savedFilters = loadFilters();
+    if (savedFilters) {
+      // Only load search term on initial mount, not on navigation
+      if (!isLoadedRef.current) {
+        setSearchTerm(savedFilters.search || "");
+      }
+
+      // Look up aircraft filter label
+      if (savedFilters.aircraft !== "NoFilter") {
+        const found = aircraftTypes.find(
+          (a) => a.value === savedFilters.aircraft,
+        );
+        if (found) {
+          setValueAircraftFilter({
+            value: found.value,
+            label: found.label,
+          });
+        }
+      }
+
+      // Look up airline filter label
+      if (savedFilters.airline !== "NoFilter") {
+        const found = airlines.find((a) => a.value === savedFilters.airline);
+        if (found) {
+          setValueAirlineFilter({
+            value: found.value,
+            label: found.label,
+          });
+        }
+      }
+
+      // Load sort field and direction
+      if (savedFilters.sortField) {
+        setSortField(savedFilters.sortField);
+      }
+      if (savedFilters.sortDirection) {
+        setSortDirection(savedFilters.sortDirection);
+      }
+    }
+    isLoadedRef.current = true;
+  }, [location.pathname]);
+
+  // Save filters to localStorage whenever they change (but not on initial load)
+  useEffect(() => {
+    if (isLoadedRef.current) {
+      saveFilters(
+        searchTerm,
+        valueAircraftFilter.value,
+        valueAirlineFilter.value,
+        sortField,
+        sortDirection,
+      );
+    }
+  }, [
+    searchTerm,
+    valueAircraftFilter,
+    valueAirlineFilter,
+    sortField,
+    sortDirection,
+  ]);
+
   // global statistics number generator
   useEffect(() => {
     const id = setInterval(() => {
@@ -59,15 +143,16 @@ const Dashboard = () => {
     label: airline.label,
   }));
 
+  const handleSearch = (e) => {
+    console.log(`search: ${e.target.value}`);
+    setSearchTerm(e.target.value);
+  };
+
   const aircraftTypeHandler = (option) => {
     setValueAircraftFilter({
       value: option.value,
       label: option.label,
     });
-  };
-
-  const aircraftTypeValue = () => {
-    AircraftTypesList.find((type) => type.value === valueAircraftFilter);
   };
 
   const airlinesHandler = (option) => {
@@ -77,8 +162,33 @@ const Dashboard = () => {
     });
   };
 
-  const airlinesValue = () => {
-    AirlinesList.find((airline) => airline.value === valueAirlineFilter);
+  const handleSort = (field) => {
+    if (sortField === field) {
+      // Toggle direction if clicking same field
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+    } else {
+      // New field, start with ascending
+      setSortField(field);
+      setSortDirection("asc");
+    }
+  };
+
+  const SortArrow = ({ field }) => {
+    if (sortField !== field) return null;
+    return (
+      <img
+        src="/arrow_back.svg"
+        alt="sort"
+        style={{
+          width: "16px",
+          height: "16px",
+          marginLeft: "12px",
+          transform:
+            sortDirection === "asc" ? "rotate(-90deg)" : "rotate(90deg)",
+          display: "inline-block",
+        }}
+      />
+    );
   };
 
   return (
@@ -119,6 +229,8 @@ const Dashboard = () => {
                 type="search"
                 name="Search"
                 id="searchbar"
+                onChange={handleSearch}
+                value={searchTerm}
                 placeholder="Type to search..."
               />
             </div>
@@ -129,10 +241,11 @@ const Dashboard = () => {
               <Select
                 unstyled
                 placeholder="All Types"
-                value={aircraftTypeValue()}
+                value={valueAircraftFilter}
                 onChange={aircraftTypeHandler}
                 options={aircraftTypes}
                 isSearchable={false}
+                components={{ DropdownIndicator: CustomDropdownIndicator }}
                 className="dashboard__main__filterbar__container__buttons__dropdown"
                 classNamePrefix="dashboard__main__filterbar__container__buttons__dropdown"
               />
@@ -144,10 +257,11 @@ const Dashboard = () => {
               <Select
                 unstyled
                 placeholder="All Airlines"
-                value={airlinesValue()}
+                value={valueAirlineFilter}
                 onChange={airlinesHandler}
                 options={airlines}
                 isSearchable={false}
+                components={{ DropdownIndicator: CustomDropdownIndicator }}
                 className="dashboard__main__filterbar__container__buttons__dropdown"
                 classNamePrefix="dashboard__main__filterbar__container__buttons__dropdown"
               />
@@ -164,18 +278,50 @@ const Dashboard = () => {
         </section>
         <section className="dashboard__main__content">
           <section className="dashboard__main__content__infobar">
-            <p className="dashboard__main__content__infobar__aircraft-information">
+            <p
+              className="dashboard__main__content__infobar__aircraft-information"
+              onClick={() => handleSort("aircraft")}
+              style={{ cursor: "pointer" }}
+            >
               Aircraft information
+              <SortArrow field="aircraft" />
             </p>
-            <p className="dashboard__main__content__infobar__airline">Airline</p>
-            <p className="dashboard__main__content__infobar__location">Location</p>
-            <p className="dashboard__main__content__infobar__date">
+            <p
+              className="dashboard__main__content__infobar__airline"
+              onClick={() => handleSort("airline")}
+              style={{ cursor: "pointer" }}
+            >
+              Airline
+              <SortArrow field="airline" />
+            </p>
+            <p
+              className="dashboard__main__content__infobar__location"
+              onClick={() => handleSort("location")}
+              style={{ cursor: "pointer" }}
+            >
+              Location
+              <SortArrow field="location" />
+            </p>
+            <p
+              className="dashboard__main__content__infobar__date"
+              onClick={() => handleSort("date")}
+              style={{ cursor: "pointer" }}
+            >
               Date added
+              <SortArrow field="date" />
             </p>
-            <p className="dashboard__main__content__infobar__actions">Actions</p>
+            <p className="dashboard__main__content__infobar__actions">
+              Actions
+            </p>
           </section>
           <section className="dashboard__main__content__spotcards">
-            <Spotcards />
+            <Spotcards
+              searchTerm={searchTerm}
+              aircraftFilter={valueAircraftFilter}
+              airlineFilter={valueAirlineFilter}
+              sortField={sortField}
+              sortDirection={sortDirection}
+            />
           </section>
         </section>
         <section className="dashboard__main__statistics">

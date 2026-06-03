@@ -9,6 +9,17 @@ import { useState, useRef, useEffect } from "react";
 import Select from "react-select";
 import { useNavigate, useParams } from "react-router";
 
+// Custom dropdown indicator component
+const CustomDropdownIndicator = (props) => (
+  <div {...props.innerProps}>
+    <img
+      src="/dropdown_arrow.svg"
+      alt="dropdown"
+      style={{ width: "48px", height: "48px" }}
+    />
+  </div>
+);
+
 const Edit_spot = () => {
   const formRef = useRef(null);
   let navigate = useNavigate();
@@ -31,7 +42,6 @@ const Edit_spot = () => {
   });
   const [buttonState, setButtonState] = useState(true);
   const user = getCurrentUser();
-
 
   // Filter for the specific spot
   const currentSpot = spots.find((spot) => spot.id === parseInt(spotId));
@@ -224,6 +234,7 @@ const Edit_spot = () => {
               onChange={aircraftTypeHandler}
               options={aircraftTypes}
               isSearchable={false}
+              components={{ DropdownIndicator: CustomDropdownIndicator }}
               className="add-spot__main__form__dropdown"
               classNamePrefix="add-spot__main__form__dropdown"
               required
@@ -248,6 +259,7 @@ const Edit_spot = () => {
               onChange={airlinesHandler}
               options={airlines}
               isSearchable={false}
+              components={{ DropdownIndicator: CustomDropdownIndicator }}
               className="add-spot__main__form__dropdown"
               classNamePrefix="add-spot__main__form__dropdown"
               required

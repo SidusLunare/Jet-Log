@@ -88,7 +88,6 @@ export function getSpottedList() {
   return current && Array.isArray(current.spotted) ? current.spotted : [];
 }
 
-
 export function editSpot(spotId, changedSpot) {
   // ensure numeric id for comparisons
   const idNum = parseInt(spotId, 10);
@@ -121,8 +120,10 @@ export function editSpot(spotId, changedSpot) {
   return editedSpot;
 }
 
-
 export function removeSpot(spotId) {
+  // ensure numeric id for comparisons
+  const idNum = parseInt(spotId, 10);
+  // get variables
   const users = loadUsers();
   const current = getCurrentUser();
   if (!current) throw new Error("No user logged in");
@@ -131,7 +132,7 @@ export function removeSpot(spotId) {
   if (uidx === -1) throw new Error("Current user not found");
 
   // 1) Filter out the removed spot
-  let spots = (users[uidx].spotted || []).filter((spot) => spot.id !== spotId);
+  let spots = (users[uidx].spotted || []).filter((spot) => spot.id !== idNum);
 
   // 2) Re-assign IDs sequentially 1, 2, 3, …
   spots = spots.map((spot, idx) => ({
@@ -142,4 +143,45 @@ export function removeSpot(spotId) {
   // 3) Persist back
   users[uidx].spotted = spots;
   saveUsers(users);
+}
+
+/** Save dashboard filters for current user */
+export function saveFilters(
+  searchTerm,
+  aircraftValue,
+  airlineValue,
+  sortField = null,
+  sortDirection = "asc",
+) {
+  const users = loadUsers();
+  const current = getCurrentUser();
+  if (!current) return;
+
+  const uidx = users.findIndex((u) => u.id === current.id);
+  if (uidx === -1) return;
+
+  users[uidx].filters = {
+    search: searchTerm,
+    aircraft: aircraftValue,
+    airline: airlineValue,
+    sortField: sortField,
+    sortDirection: sortDirection,
+  };
+  saveUsers(users);
+}
+
+/** Load dashboard filters for current user */
+export function loadFilters() {
+  const current = getCurrentUser();
+  if (!current) return null;
+
+  return (
+    current.filters || {
+      search: "",
+      aircraft: "NoFilter",
+      airline: "NoFilter",
+      sortField: null,
+      sortDirection: "asc",
+    }
+  );
 }
