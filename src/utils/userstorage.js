@@ -75,7 +75,7 @@ export function addSpot(spot) {
 
   // Next ID is always length+1 now
   const newId = existing.length + 1;
-  const newSpot = { ...spot, id: newId };
+  const newSpot = { ...spot, id: newId, favourited: false };
 
   users[uidx].spotted = [...existing, newSpot];
   saveUsers(users);
@@ -155,7 +155,7 @@ export function saveFilters(
 ) {
   const users = loadUsers();
   const current = getCurrentUser();
-  if (!current) return;
+  if (!current) throw new Error("No user logged in");
 
   const uidx = users.findIndex((u) => u.id === current.id);
   if (uidx === -1) return;
@@ -173,7 +173,7 @@ export function saveFilters(
 /** Load dashboard filters for current user */
 export function loadFilters() {
   const current = getCurrentUser();
-  if (!current) return null;
+  if (!current) throw new Error("No user logged in");
 
   return (
     current.filters || {
@@ -184,4 +184,43 @@ export function loadFilters() {
       sortDirection: "asc",
     }
   );
+}
+
+export function saveFavourites(id) {
+  // get variables
+  const users = loadUsers();
+  const current = getCurrentUser();
+  // check if user is actually logged on
+  if (!current) throw new Error("No user logged in");
+
+  // find correct user
+  const uidx = users.findIndex((u) => u.id === current.id);
+  if (uidx === -1) throw new Error("Current user not found");
+
+  const spots = users[uidx].spotted || [];
+  // find the index of the spot to edit
+  const idx = spots.findIndex((s) => s.id === id);
+  if (idx === -1) throw new Error("Spot not found");
+
+  //favourite actions
+  const spot = current.spotted[id - 1];
+  console.log(spot);
+
+  let favouriteAction;
+  if (spot.favourited === false) {
+    favouriteAction = true;
+  } else if (spot.favourited === true) {
+    favouriteAction = false;
+  }
+
+  const favouriteActionSpot = { ...spot, favourited: favouriteAction };
+
+  // replace in-place to preserve array position
+  const newSpots = [...spots];
+  newSpots[idx] = favouriteActionSpot;
+
+  // persist and return edited spot
+  users[uidx].spotted = newSpots;
+  saveUsers(users);
+  return favouriteActionSpot;
 }

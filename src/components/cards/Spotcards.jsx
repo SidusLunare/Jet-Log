@@ -1,8 +1,18 @@
 import { useState, useEffect } from "react";
-import { getSpottedList, removeSpot } from "../../utils/userstorage.js";
+import {
+  getSpottedList,
+  removeSpot,
+  saveFavourites,
+} from "../../utils/userstorage.js";
 import { useNavigate } from "react-router";
 
-const Spotcards = ({ searchTerm = "", aircraftFilter = {}, airlineFilter = {}, sortField = null, sortDirection = "asc" }) => {
+const Spotcards = ({
+  searchTerm = "",
+  aircraftFilter = {},
+  airlineFilter = {},
+  sortField = null,
+  sortDirection = "asc",
+}) => {
   const [spots, setSpots] = useState([]);
   const [confirmedIds, setConfirmedIds] = useState({});
   const [removingIds, setRemovingIds] = useState({});
@@ -15,11 +25,13 @@ const Spotcards = ({ searchTerm = "", aircraftFilter = {}, airlineFilter = {}, s
   // Filter spots based on search and dropdown filters
   const filteredSpots = spots.filter((spot) => {
     const matchesAircraft =
-      aircraftFilter.value === "NoFilter" || aircraftFilter.value === undefined ||
+      aircraftFilter.value === "NoFilter" ||
+      aircraftFilter.value === undefined ||
       spot.aircraftType.value === aircraftFilter.value;
 
     const matchesAirline =
-      airlineFilter.value === "NoFilter" || airlineFilter.value === undefined ||
+      airlineFilter.value === "NoFilter" ||
+      airlineFilter.value === undefined ||
       spot.airline.value === airlineFilter.value;
 
     const matchesSearch =
@@ -61,6 +73,11 @@ const Spotcards = ({ searchTerm = "", aircraftFilter = {}, airlineFilter = {}, s
     if (aVal > bVal) return sortDirection === "asc" ? 1 : -1;
     return 0;
   });
+
+  const favouriteItem = (spotId) => {
+    saveFavourites(spotId);
+    setSpots(getSpottedList());
+  };
 
   const handleRemove = (id) => {
     if (!confirmedIds[id]) {
@@ -111,16 +128,24 @@ const Spotcards = ({ searchTerm = "", aircraftFilter = {}, airlineFilter = {}, s
               </p>
               <div className="dashboard__main__content__spotcards__card__actions">
                 <button
-                  onClick={() => {
-                    navigate(`/dashboard/edit-spot/${spot.id}`);
-                    console.log(`Navigate to edit spot with ID: ${spot.id}`);
-                  }}
+                  className="dashboard__main__content__spotcards__card__actions__favourite"
+                  onClick={() => favouriteItem(spot.id)}
                 >
-                  Edit
+                  {spot.favourited == false ? "Favourite" : "Unfavourite"}
                 </button>
-                <button onClick={() => handleRemove(spot.id)}>
-                  {confirmedIds[spot.id] ? "Are you Sure?" : "Remove"}
-                </button>
+                <section className="dashboard__main__content__spotcards__card__actions__edit-remove">
+                  <button
+                    onClick={() => {
+                      navigate(`/dashboard/edit-spot/${spot.id}`);
+                      console.log(`Navigate to edit spot with ID: ${spot.id}`);
+                    }}
+                  >
+                    Edit
+                  </button>
+                  <button onClick={() => handleRemove(spot.id)}>
+                    {confirmedIds[spot.id] ? "Are you Sure?" : "Remove"}
+                  </button>
+                </section>
               </div>
             </>
           )}

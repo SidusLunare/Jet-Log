@@ -329,15 +329,15 @@ const Dashboard = () => {
             <h1>Global statistics</h1>
             <div>
               <p>Total spotted aircraft</p>{" "}
-              <p>{totalSpotted.toLocaleString("de-DE")}</p>
+              <p>{totalSpotted.toLocaleString("de-DE")}x</p>
             </div>
             <div>
               <p>Total unique aircraft types</p>{" "}
-              <p>{totalUniqueAircraft.toLocaleString("de-DE")}</p>
+              <p>{totalUniqueAircraft.toLocaleString("de-DE")}x</p>
             </div>
             <div>
               <p>Total unique airlines</p>{" "}
-              <p>{totalUniqueAirlines.toLocaleString("de-DE")}</p>
+              <p>{totalUniqueAirlines.toLocaleString("de-DE")}x</p>
             </div>
             <div>
               <p>Most spotted aircraft type</p>{" "}
