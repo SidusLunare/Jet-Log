@@ -1,13 +1,14 @@
 import { aircraftTypes, airlines } from "../../data/aircraft_data.js";
 import { useNavigate, useLocation } from "react-router";
 import Select from "react-select";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 
 import {
   getCurrentUser,
   logoutUser,
   loadFilters,
   saveFilters,
+  getSpottedList,
 } from "../../utils/userstorage.js";
 import Spotcards from "../cards/Spotcards.jsx";
 
@@ -23,14 +24,14 @@ const CustomDropdownIndicator = (props) => (
 );
 
 const Dashboard = () => {
-  const tempText = "835.093";
   let navigate = useNavigate();
   const location = useLocation();
-  const [totalSpotted, setTotalSpotted] = useState(9463663);
-  const [totalUniqueAircraft, setTotalUniqueAircraft] = useState(4574);
-  const [totalUniqueAirlines, setTotalUniqueAirlines] = useState(835);
-  const [mostSpottedAircraft, setMostSpottedAircraft] = useState(1853672);
-  const [mostSpottedAirline, setMostSpottedAirline] = useState(735156);
+  const [totalSpotted, setTotalSpotted] = useState(125980);
+  const [totalUniqueAircraft, setTotalUniqueAircraft] = useState(835);
+  const [totalUniqueAirlines, setTotalUniqueAirlines] = useState(35);
+  const [mostSpottedAircraft, setMostSpottedAircraft] = useState(25638);
+  const [mostSpottedAirline, setMostSpottedAirline] = useState(7351);
+  const [localSpots, setLocalSpots] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [valueAircraftFilter, setValueAircraftFilter] = useState({
     value: "NoFilter",
@@ -112,6 +113,10 @@ const Dashboard = () => {
     sortDirection,
   ]);
 
+  useEffect(() => {
+    setLocalSpots(getSpottedList());
+  }, []);
+
   // global statistics number generator
   useEffect(() => {
     const id = setInterval(() => {
@@ -190,6 +195,50 @@ const Dashboard = () => {
       />
     );
   };
+
+  const localStats = useMemo(() => {
+    const totalSpotted = localSpots.length;
+    const aircraftCount = {};
+    const airlineCount = {};
+
+    localSpots.forEach((spot) => {
+      const aircraftKey = spot.aircraftType?.label || spot.aircraftType || "Unknown";
+      const airlineKey = spot.airline?.label || spot.airline || "Unknown";
+      aircraftCount[aircraftKey] = (aircraftCount[aircraftKey] || 0) + 1;
+      airlineCount[airlineKey] = (airlineCount[airlineKey] || 0) + 1;
+    });
+
+    const uniqueAircraft = Object.keys(aircraftCount).length;
+    const uniqueAirlines = Object.keys(airlineCount).length;
+
+    const mostSpottedAircraft = Object.keys(aircraftCount).reduce(
+      (best, current) =>
+        aircraftCount[current] > (aircraftCount[best] || 0) ? current : best,
+      Object.keys(aircraftCount)[0] || "None",
+    );
+    const mostSpottedAirline = Object.keys(airlineCount).reduce(
+      (best, current) =>
+        airlineCount[current] > (airlineCount[best] || 0) ? current : best,
+      Object.keys(airlineCount)[0] || "None",
+    );
+
+    const mostSpottedAircraftCount = mostSpottedAircraft
+      ? aircraftCount[mostSpottedAircraft] || 0
+      : 0;
+    const mostSpottedAirlineCount = mostSpottedAirline
+      ? airlineCount[mostSpottedAirline] || 0
+      : 0;
+
+    return {
+      totalSpotted,
+      uniqueAircraft,
+      uniqueAirlines,
+      mostSpottedAircraft,
+      mostSpottedAircraftCount,
+      mostSpottedAirline,
+      mostSpottedAirlineCount,
+    };
+  }, [localSpots]);
 
   return (
     <section className="dashboard">
@@ -321,6 +370,7 @@ const Dashboard = () => {
               airlineFilter={valueAirlineFilter}
               sortField={sortField}
               sortDirection={sortDirection}
+              onSpotsChange={() => setLocalSpots(getSpottedList())}
             />
           </section>
         </section>
@@ -355,19 +405,25 @@ const Dashboard = () => {
           <div className="dashboard__main__statistics__local">
             <h1>Local statistics</h1>
             <div>
-              <p>Total spotted aircraft</p> <p>{tempText}</p>
+              <p>Total spotted aircraft</p> <p>{localStats.totalSpotted.toLocaleString("de-DE")}x</p>
             </div>
             <div>
-              <p>Total unique aircraft types</p> <p>{tempText}</p>
+              <p>Total unique aircraft types</p> <p>{localStats.uniqueAircraft.toLocaleString("de-DE")}x</p>
             </div>
             <div>
-              <p>Total unique airlines</p> <p>{tempText}</p>
+              <p>Total unique airlines</p> <p>{localStats.uniqueAirlines.toLocaleString("de-DE")}x</p>
             </div>
             <div>
-              <p>Most spotted aircraft type</p> <p>{tempText}</p>
+              <p>Most spotted aircraft type</p>
+              <p>
+                {localStats.mostSpottedAircraft} ({localStats.mostSpottedAircraftCount}x)
+              </p>
             </div>
             <div>
-              <p>Most spotted airline</p> <p>{tempText}</p>
+              <p>Most spotted airline</p>
+              <p>
+                {localStats.mostSpottedAirline} ({localStats.mostSpottedAirlineCount}x)
+              </p>
             </div>
           </div>
         </section>

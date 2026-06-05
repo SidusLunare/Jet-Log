@@ -4,6 +4,7 @@ import {
   getCurrentUser,
   logoutUser,
 } from "../../utils/userstorage.js";
+import { useAlert } from "../Alert/AlertContext";
 import { useState, useRef, useEffect } from "react";
 import Select from "react-select";
 import { useNavigate } from "react-router";
@@ -37,6 +38,7 @@ const Add_spot = () => {
   });
   const [buttonState, setButtonState] = useState(false);
   const user = getCurrentUser();
+  const { showAlert } = useAlert();
 
   // Check button state whenever form fields change
   useEffect(() => {
@@ -132,6 +134,7 @@ const Add_spot = () => {
     };
     console.log("Sending to addSpot:", newSpot);
     addSpot(newSpot);
+    showAlert("Spot added successfully", "success", 2000);
     navigate("/dashboard");
   };
 

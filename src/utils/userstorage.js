@@ -74,7 +74,9 @@ export function addSpot(spot) {
   const existing = users[uidx].spotted || [];
 
   // Next ID is always length+1 now
-  const newId = existing.length + 1;
+  const newId = existing.length
+    ? Math.max(...existing.map((spot) => spot.id)) + 1
+    : 1;
   const newSpot = { ...spot, id: newId, favourited: false };
 
   users[uidx].spotted = [...existing, newSpot];
@@ -108,7 +110,7 @@ export function editSpot(spotId, changedSpot) {
   if (idx === -1) throw new Error("Spot not found");
 
   // create the edited spot with the original id
-  const editedSpot = { ...changedSpot, id: idNum };
+  const editedSpot = { ...changedSpot, id: idNum};
 
   // replace in-place to preserve array position
   const newSpots = [...spots];
@@ -131,14 +133,8 @@ export function removeSpot(spotId) {
   const uidx = users.findIndex((u) => u.id === current.id);
   if (uidx === -1) throw new Error("Current user not found");
 
-  // 1) Filter out the removed spot
-  let spots = (users[uidx].spotted || []).filter((spot) => spot.id !== idNum);
-
-  // 2) Re-assign IDs sequentially 1, 2, 3, …
-  spots = spots.map((spot, idx) => ({
-    ...spot,
-    id: idx + 1,
-  }));
+  // 1) Filter out the removed spot, but keep IDs stable for remaining spots
+  const spots = (users[uidx].spotted || []).filter((spot) => spot.id !== idNum);
 
   // 3) Persist back
   users[uidx].spotted = spots;

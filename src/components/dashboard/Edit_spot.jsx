@@ -5,6 +5,7 @@ import {
   logoutUser,
   getSpottedList,
 } from "../../utils/userstorage.js";
+import { useAlert } from "../Alert/AlertContext";
 import { useState, useRef, useEffect } from "react";
 import Select from "react-select";
 import { useNavigate, useParams } from "react-router";
@@ -42,6 +43,7 @@ const Edit_spot = () => {
   });
   const [buttonState, setButtonState] = useState(true);
   const user = getCurrentUser();
+  const { showAlert } = useAlert();
 
   // Filter for the specific spot
   const currentSpot = spots.find((spot) => spot.id === parseInt(spotId));
@@ -87,23 +89,7 @@ const Edit_spot = () => {
       setDateData(currentSpot.date);
     }
   }, [spotId]);
-
-  // const setInitialValues = () => {
-  //   if (currentSpot) {
-  //     setValueAircraftFilter({
-  //       value: currentSpot.aircraftType.value,
-  //       label: currentSpot.aircraftType.label,
-  //     });
-  //     setRegistrationData(currentSpot.registration);
-  //     setValueAirlineFilter({
-  //       value: currentSpot.airline.value,
-  //       label: currentSpot.airline.label,
-  //     });
-  //     setLocationData(currentSpot.location);
-  //     setDateData(currentSpot.date);
-  //   }
-  // };
-
+  
   //dropdown functions
   const AircraftTypesList = aircraftTypes.map((aircraftType) => ({
     value: aircraftType.value,
@@ -157,13 +143,16 @@ const Edit_spot = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const changedSpot = {
+      ...currentSpot,
       aircraftType: valueAircraftFilter,
       registration: registrationData,
       airline: valueAirlineFilter,
       location: locationData,
       date: dateData,
+      favourited: currentSpot?.favourited ?? false,
     };
     editSpot(spotId, changedSpot);
+    showAlert("Spot updated successfully", "success", 2000);
     navigate("/dashboard");
   };
 

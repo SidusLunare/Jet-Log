@@ -17,3 +17,33 @@
   margin: 0;
   padding: 0;
 }
+
+/* App alert styles */
+.app-alert {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.85);
+  padding: 12px 18px;
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+}
+
+.app-alert__message {
+  margin: 0;
+  color: #fff;
+  font-weight: 600;
+}
+
+.app-alert--success {
+  background: #1a7f37;
+}
+.app-alert--info {
+  background: #2b6cff;
+}
+.app-alert--error {
+  background: #b91c1c;
+}

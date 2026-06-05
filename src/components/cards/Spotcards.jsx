@@ -12,6 +12,7 @@ const Spotcards = ({
   airlineFilter = {},
   sortField = null,
   sortDirection = "asc",
+  onSpotsChange = () => {},
 }) => {
   const [spots, setSpots] = useState([]);
   const [confirmedIds, setConfirmedIds] = useState({});
@@ -44,6 +45,8 @@ const Spotcards = ({
 
   // Sort the filtered spots
   const sortedSpots = [...filteredSpots].sort((a, b) => {
+    if (a.favourited && !b.favourited) return -1;
+    if (!a.favourited && b.favourited) return 1;
     if (!sortField) return 0;
 
     let aVal, bVal;
@@ -77,6 +80,7 @@ const Spotcards = ({
   const favouriteItem = (spotId) => {
     saveFavourites(spotId);
     setSpots(getSpottedList());
+    onSpotsChange();
   };
 
   const handleRemove = (id) => {
@@ -89,8 +93,9 @@ const Spotcards = ({
       setRemovingIds((prev) => ({ ...prev, [id]: true }));
       setTimeout(() => {
         removeSpot(id);
-        setSpots((prev) => prev.filter((spot) => spot.id !== id));
+        setSpots(getSpottedList());
         setConfirmedIds((prev) => ({ ...prev, [id]: false }));
+        onSpotsChange();
       }, 2000);
     }
   };
@@ -105,7 +110,11 @@ const Spotcards = ({
       {sortedSpots.map((spot) => (
         <section
           key={spot.id}
-          className="dashboard__main__content__spotcards__card"
+          className={
+            spot.favourited
+              ? "dashboard__main__content__spotcards__card dashboard__main__content__spotcards__card--favourite"
+              : "dashboard__main__content__spotcards__card"
+          }
         >
           {removingIds[spot.id] ? (
             <p className="dashboard__main__content__spotcards__card--removed">
