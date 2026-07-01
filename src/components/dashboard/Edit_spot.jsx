@@ -48,6 +48,27 @@ const Edit_spot = () => {
   // Filter for the specific spot
   const currentSpot = spots.find((spot) => spot.id === parseInt(spotId));
 
+  // Check button state whenever form fields change
+  useEffect(() => {
+    if (
+      registrationData === "" ||
+      locationData === "" ||
+      dateData === "" ||
+      valueAircraftFilter.value === "NoFilter" ||
+      valueAirlineFilter.value === "NoFilter"
+    ) {
+      setButtonState(false);
+    } else {
+      setButtonState(true);
+    }
+  }, [
+    registrationData,
+    locationData,
+    dateData,
+    valueAircraftFilter,
+    valueAirlineFilter,
+  ]);
+
   const ButtonStateHandler = () => {
     const off = false;
     const on = true;
@@ -89,7 +110,7 @@ const Edit_spot = () => {
       setDateData(currentSpot.date);
     }
   }, [spotId]);
-  
+
   //dropdown functions
   const AircraftTypesList = aircraftTypes.map((aircraftType) => ({
     value: aircraftType.value,
@@ -105,7 +126,6 @@ const Edit_spot = () => {
       value: option.value,
       label: option.label,
     });
-    ButtonStateHandler();
   };
 
   const airlinesHandler = (option) => {
@@ -113,7 +133,6 @@ const Edit_spot = () => {
       value: option.value,
       label: option.label,
     });
-    ButtonStateHandler();
   };
 
   //form functions
@@ -121,19 +140,16 @@ const Edit_spot = () => {
   const registrationNumHandler = (e) => {
     setRegistrationData(e.target.value);
     console.log(e.target.value);
-    ButtonStateHandler();
   };
 
   const locationHandler = (e) => {
     setLocationData(e.target.value);
     console.log(e.target.value);
-    ButtonStateHandler();
   };
 
   const dateHandler = (e) => {
     setDateData(e.target.value);
     console.log(e.target.value);
-    ButtonStateHandler();
   };
 
   const handleExternalClick = () => {
